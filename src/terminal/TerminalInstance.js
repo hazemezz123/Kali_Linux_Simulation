@@ -3,6 +3,7 @@ import { buildFS } from "../fs.js";
 import { executePipe } from "../commands/pipe.js";
 import { resolvePath } from "../utils/path.js";
 import { createPrompt, lineNode } from "../ui/line-node.js";
+import { getUserName } from "../firebase.js";
 
 export class TerminalInstance {
   constructor(tabId, paneEl) {
@@ -76,6 +77,7 @@ export class TerminalInstance {
   }
 
   boot() {
+    const userName = getUserName();
     const boot = [
       { type: "ascii" },
       { type: "output", text: "" },
@@ -84,9 +86,11 @@ export class TerminalInstance {
         text: "Kali GNU/Linux Rolling 2024.1 | Kernel 6.6.9-amd64",
       },
       { type: "output", text: "" },
+      { type: "success", text: `  Welcome back, ${userName}! 👋` },
+      { type: "output", text: "" },
       { type: "kv", key: "System ", value: "x86_64 GNU/Linux" },
       { type: "kv", key: "Shell  ", value: "/bin/bash" },
-      { type: "kv", key: "User   ", value: "root", color: "#ff4757" },
+      { type: "kv", key: "User   ", value: userName, color: "#ff4757" },
       { type: "kv", key: "IP     ", value: "192.168.1.50", color: "#2ed573" },
       { type: "output", text: "" },
       { type: "success", text: '  Type "help" to see all available commands.' },

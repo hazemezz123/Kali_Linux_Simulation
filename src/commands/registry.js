@@ -1,4 +1,5 @@
 import { resolvePath, displayPath } from "../utils/path.js";
+import { saveVisitor, getVisitors } from "../firebase.js";
 
 // Command registry. Kept close to original behavior for easy maintenance.
 export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
@@ -103,6 +104,13 @@ export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
             ["chown <u> <f>", "Ownership"],
             ["file <path>", "File type"],
             ["which <cmd>", "Find command"],
+          ],
+        ],
+        [
+          "Visitors",
+          [
+            ["register <name>", "Register your name"],
+            ["visitors", "Show all visitors"],
           ],
         ],
       ];
@@ -1413,6 +1421,52 @@ export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
     exit() {
       addOutput({ type: "dim", text: "logout" });
       addOutput({ type: "dim", text: "Connection to kali closed." });
+    },
+
+    async register(args) {
+      const name = args.join(" ").trim();
+      if (!name)
+        return addOutput({
+          type: "error",
+          text: "register: usage: register <your_name>",
+        });
+      try {
+        await saveVisitor(name);
+        addOutput({
+          type: "success",
+          text: `✓ تم تسجيل '${name}' بنجاح!`,
+        });
+      } catch (err) {
+        addOutput({
+          type: "error",
+          text: `register: فشل التسجيل - ${err.message}`,
+        });
+      }
+    },
+
+    async visitors() {
+      try {
+        addOutput({ type: "info", text: "جاري تحميل قائمة الزوار..." });
+        const list = await getVisitors();
+        if (!list.length) {
+          addOutput({ type: "dim", text: "لا يوجد زوار مسجلين بعد." });
+          return;
+        }
+        addOutput({ type: "banner", text: "┌─ قائمة الزوار ─────────────────────────────────────┐" });
+        list.forEach((v, i) => {
+          const date = v.timestamp?.toDate?.() || new Date();
+          addOutput({
+            type: "output",
+            text: `  ${String(i + 1).padStart(3)}. ${v.name.padEnd(30)} ${date.toLocaleString('ar-EG')}`,
+          });
+        });
+        addOutput({ type: "dim", text: `└─ المجموع: ${list.length} زائر ──────────────────────────────────┘` });
+      } catch (err) {
+        addOutput({
+          type: "error",
+          text: `visitors: فشل التحميل - ${err.message}`,
+        });
+      }
     },
   };
 

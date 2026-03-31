@@ -1,4 +1,5 @@
 import { TerminalInstance } from "../terminal/TerminalInstance.js";
+import { saveVisitor, isUserRegistered } from "../firebase.js";
 
 let tabCounter = 1;
 const makeTab = () => ({ id: ++tabCounter, title: `Terminal ${tabCounter}` });
@@ -13,9 +14,91 @@ export class KaliApp {
     this.instances = new Map();
     this.panes = new Map();
 
-    this.render();
-    this.tickClock();
-    setInterval(() => this.tickClock(), 1000);
+    this.checkAndShowWelcome();
+  }
+
+  async checkAndShowWelcome() {
+    try {
+      const registered = await isUserRegistered();
+      if (registered) {
+        this.render();
+        this.tickClock();
+        setInterval(() => this.tickClock(), 1000);
+      } else {
+        this.showWelcomeModal();
+      }
+    } catch (err) {
+      console.error('Error checking registration:', err);
+      this.showWelcomeModal();
+    }
+  }
+
+  showWelcomeModal() {
+    const modal = document.createElement("div");
+    modal.className = "welcome-modal";
+
+    const box = document.createElement("div");
+    box.className = "welcome-box";
+
+    const title = document.createElement("div");
+    title.className = "welcome-title";
+    title.textContent = "⬡ Welcome to Kali Terminal";
+
+    const subtitle = document.createElement("div");
+    subtitle.className = "welcome-subtitle";
+    subtitle.textContent = "Enter your name to access the simulator";
+
+    const form = document.createElement("form");
+    form.className = "welcome-form";
+
+    const input = document.createElement("input");
+    input.className = "welcome-input";
+    input.type = "text";
+    input.placeholder = "Enter your name...";
+    input.required = true;
+    input.autofocus = true;
+
+    const btn = document.createElement("button");
+    btn.className = "welcome-btn";
+    btn.type = "submit";
+    btn.textContent = "Enter";
+
+    const msg = document.createElement("div");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = input.value.trim();
+      if (!name) return;
+
+      btn.disabled = true;
+      btn.textContent = "Registering...";
+      msg.className = "welcome-success";
+      msg.textContent = "";
+
+      try {
+        await saveVisitor(name);
+        msg.className = "welcome-success";
+        msg.textContent = "✓ Registration successful!";
+        setTimeout(() => {
+          modal.remove();
+          this.render();
+          this.tickClock();
+          setInterval(() => this.tickClock(), 1000);
+        }, 800);
+      } catch (err) {
+        msg.className = "welcome-error";
+        msg.textContent = `Error: ${err.message}`;
+        btn.disabled = false;
+        btn.textContent = "Enter";
+      }
+    });
+
+    form.append(input, btn, msg);
+    box.append(title, subtitle, form);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+
+    setTimeout(() => input.focus(), 100);
   }
 
   tickClock() {
