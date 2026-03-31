@@ -1,6 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { firebaseConfig } from "../firebase-config.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD0CziQHyxbbdsMVXw4PtNFT7E41-AekHk",
+  authDomain: "register-app-18ee2.firebaseapp.com",
+  projectId: "register-app-18ee2",
+  storageBucket: "register-app-18ee2.firebasestorage.app",
+  messagingSenderId: "237230877947",
+  appId: "1:237230877437:web:64b10e606f91fda81d145e",
+  measurementId: "G-B5WNGF2GJK"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

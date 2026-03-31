@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Visitors collection - allow read for all, write with validation
+    match /visitors/{document} {
+      // Anyone can read visitors list
+      allow read: if true;
+      
+      // Only allow creating new visitors with valid data
+      allow create: if request.resource.data.keys().hasAll(['name', 'deviceId', 'timestamp'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.deviceId is string
+                    && request.resource.data.timestamp is timestamp;
+      
+      // Prevent updates and deletes
+      allow update, delete: if false;
+    }
+    
+    // Deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
