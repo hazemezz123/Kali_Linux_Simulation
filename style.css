@@ -10,11 +10,14 @@ body {
   width: 100%;
   height: 100%;
   background: #0a0a0f;
+  overflow: hidden;
 }
 
 body {
   font-family: "JetBrains Mono", monospace;
   color: #e0e0ff;
+  /* Prevent zoom on input focus on mobile */
+  touch-action: manipulation;
 }
 
 #app {
@@ -39,6 +42,15 @@ body {
   background: #0f0f1a;
   border-bottom: 1px solid #1e1e3a;
   flex-shrink: 0;
+  min-height: 36px;
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 5px 8px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 }
 
 .top-left {
@@ -54,10 +66,23 @@ body {
   font-size: 12px;
 }
 
+@media (max-width: 768px) {
+  .top-logo {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+}
+
 .top-distro,
 .top-clock,
 .top-right {
   color: #5c5c8a;
+}
+
+@media (max-width: 768px) {
+  .top-distro {
+    display: none;
+  }
 }
 
 .top-distro {
@@ -73,6 +98,14 @@ body {
   align-items: center;
   gap: 14px;
   font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .top-right {
+    gap: 8px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
 }
 
 .top-user {
@@ -104,6 +137,12 @@ body {
   line-height: 1;
 }
 
+@media (max-width: 768px) {
+  .top-owner-links {
+    display: none;
+  }
+}
+
 .top-owner-links a:hover {
   text-decoration: underline;
 }
@@ -127,6 +166,13 @@ body {
   overflow: hidden;
   background: #0f0f1a;
   box-shadow: 0 0 30px rgba(41, 121, 255, 0.07);
+}
+
+@media (max-width: 768px) {
+  .window-chrome {
+    margin: 5px;
+    border-radius: 4px;
+  }
 }
 
 .title-bar {
@@ -248,10 +294,19 @@ body {
 .terminal-output {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto;
   padding: 12px 16px;
   cursor: text;
   scrollbar-width: thin;
   scrollbar-color: #1e1e3a transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .terminal-output {
+    padding: 8px;
+    font-size: 12px;
+  }
 }
 
 .terminal-input-row {
@@ -259,6 +314,18 @@ body {
   align-items: center;
   padding: 4px 16px 12px;
   flex-shrink: 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .terminal-input-row {
+    padding: 4px 8px 8px;
+    /* Ensure input row stays visible above mobile keyboard */
+    position: sticky;
+    bottom: 0;
+    background: #0f0f1a;
+    z-index: 10;
+  }
 }
 
 .terminal-input {
@@ -270,6 +337,14 @@ body {
   font-family: "JetBrains Mono", monospace;
   font-size: 13px;
   caret-color: #00e5ff;
+  /* Prevent zoom on mobile */
+  font-size: 16px;
+}
+
+@media (min-width: 769px) {
+  .terminal-input {
+    font-size: 13px;
+  }
 }
 
 .prompt {
@@ -278,6 +353,12 @@ body {
   user-select: none;
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .prompt {
+    font-size: 12px;
+  }
 }
 
 .prompt-user {
@@ -310,6 +391,13 @@ body {
   white-space: pre-wrap;
   word-break: break-all;
   font-family: "JetBrains Mono", monospace;
+}
+
+@media (max-width: 768px) {
+  .line {
+    font-size: 12px;
+    line-height: 1.5;
+  }
 }
 
 .line-ascii {
@@ -432,6 +520,14 @@ body {
   backdrop-filter: blur(12px);
 }
 
+@media (max-width: 768px) {
+  .welcome-box {
+    padding: 24px;
+    width: 95%;
+    border-radius: 8px;
+  }
+}
+
 .welcome-title {
   color: #00e5ff;
   font-size: 24px;
@@ -455,6 +551,7 @@ body {
 }
 
 .welcome-input {
+  width: 100%;
   background: #0f0f1a;
   border: 1px solid #1e1e3a;
   border-radius: 6px;
@@ -464,6 +561,14 @@ body {
   font-size: 14px;
   outline: none;
   transition: all 0.2s;
+  /* Prevent zoom on mobile */
+  font-size: 16px;
+}
+
+@media (min-width: 769px) {
+  .welcome-input {
+    font-size: 14px;
+  }
 }
 
 .welcome-input:focus {

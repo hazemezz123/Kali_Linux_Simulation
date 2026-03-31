@@ -27,6 +27,20 @@ export function getUserName() {
   return localStorage.getItem('userName') || 'root';
 }
 
+export async function getLocationData() {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    return {
+      country: data.country_name || 'Unknown',
+      city: data.city || 'Unknown',
+      ip: data.ip || 'Unknown'
+    };
+  } catch (err) {
+    return { country: 'Unknown', city: 'Unknown', ip: 'Unknown' };
+  }
+}
+
 export async function isUserRegistered() {
   const deviceId = getDeviceId();
   const q = query(collection(db, "visitors"), where("deviceId", "==", deviceId));
@@ -36,15 +50,18 @@ export async function isUserRegistered() {
 
 export async function saveVisitor(name) {
   const deviceId = getDeviceId();
+  const location = await getLocationData();
   localStorage.setItem('userName', name);
   await addDoc(collection(db, "visitors"), { 
     name, 
     deviceId,
-    timestamp: new Date() 
+    country: location.country,
+    city: location.city,
+    timestamp: new Date()
   });
 }
 
-export async function getVisitors() {
+export async function getVisitorCount() {
   const snapshot = await getDocs(collection(db, "visitors"));
-  return snapshot.docs.map(doc => doc.data());
+  return snapshot.size;
 }

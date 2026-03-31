@@ -1,5 +1,5 @@
 import { resolvePath, displayPath } from "../utils/path.js";
-import { saveVisitor, getVisitors } from "../firebase.js";
+import { saveVisitor } from "../firebase.js";
 
 // Command registry. Kept close to original behavior for easy maintenance.
 export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
@@ -1434,39 +1434,21 @@ export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
         await saveVisitor(name);
         addOutput({
           type: "success",
-          text: `✓ تم تسجيل '${name}' بنجاح!`,
+          text: `✓ Registered '${name}' successfully!`,
         });
       } catch (err) {
         addOutput({
           type: "error",
-          text: `register: فشل التسجيل - ${err.message}`,
+          text: `register: Registration failed - ${err.message}`,
         });
       }
     },
 
-    async visitors() {
-      try {
-        addOutput({ type: "info", text: "جاري تحميل قائمة الزوار..." });
-        const list = await getVisitors();
-        if (!list.length) {
-          addOutput({ type: "dim", text: "لا يوجد زوار مسجلين بعد." });
-          return;
-        }
-        addOutput({ type: "banner", text: "┌─ قائمة الزوار ─────────────────────────────────────┐" });
-        list.forEach((v, i) => {
-          const date = v.timestamp?.toDate?.() || new Date();
-          addOutput({
-            type: "output",
-            text: `  ${String(i + 1).padStart(3)}. ${v.name.padEnd(30)} ${date.toLocaleString('ar-EG')}`,
-          });
-        });
-        addOutput({ type: "dim", text: `└─ المجموع: ${list.length} زائر ──────────────────────────────────┘` });
-      } catch (err) {
-        addOutput({
-          type: "error",
-          text: `visitors: فشل التحميل - ${err.message}`,
-        });
-      }
+    visitors() {
+      addOutput({
+        type: "info",
+        text: "Use the visitor counter in the top bar to see total visitors.",
+      });
     },
   };
 

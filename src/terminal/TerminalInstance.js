@@ -4,6 +4,7 @@ import { executePipe } from "../commands/pipe.js";
 import { resolvePath } from "../utils/path.js";
 import { createPrompt, lineNode } from "../ui/line-node.js";
 import { getUserName } from "../firebase.js";
+import { isMobile, handleViewportResize } from "../utils/mobile.js";
 
 export class TerminalInstance {
   constructor(tabId, paneEl) {
@@ -16,9 +17,27 @@ export class TerminalInstance {
     this.histIdx = -1;
     this.input = "";
     this.outputLines = [];
+    this.manualBlur = false;
 
     this.buildDom();
     this.boot();
+    
+    // Handle mobile keyboard
+    if (isMobile()) {
+      this.setupMobileHandlers();
+    }
+  }
+
+  setupMobileHandlers() {
+    // Keep input focused when keyboard opens
+    this.cleanupResize = handleViewportResize((event) => {
+      if (event === 'keyboard-open') {
+        // Scroll to bottom when keyboard opens
+        setTimeout(() => {
+          this.outputEl.scrollTop = this.outputEl.scrollHeight;
+        }, 100);
+      }
+    });
   }
 
   buildDom() {
@@ -35,12 +54,22 @@ export class TerminalInstance {
     this.promptEl = createPrompt(this.cwd);
     this.inputEl = document.createElement("input");
     this.inputEl.className = "terminal-input";
+    this.inputEl.type = "text";
     this.inputEl.autocomplete = "off";
+    this.inputEl.autocapitalize = "off";
+    this.inputEl.autocorrect = "off";
     this.inputEl.spellcheck = false;
     this.inputEl.addEventListener("input", (e) => {
       this.input = e.target.value;
     });
     this.inputEl.addEventListener("keydown", (e) => this.handleKey(e));
+
+    // Prevent keyboard from hiding on mobile when scrolling
+    this.inputEl.addEventListener("blur", () => {
+      if (this.isActive() && !this.manualBlur) {
+        setTimeout(() => this.inputEl.focus(), 0);
+      }
+    });
 
     this.inputRow.append(this.promptEl, this.inputEl);
     this.root.append(this.outputEl, this.inputRow);
@@ -73,7 +102,13 @@ export class TerminalInstance {
     }
     this.outputLines.push({ ...entry, id: Math.random() });
     this.outputEl.appendChild(lineNode(entry));
-    this.outputEl.scrollTop = this.outputEl.scrollHeight;
+    
+    // Smooth scroll on mobile
+    if (this.isActive()) {
+      requestAnimationFrame(() => {
+        this.outputEl.scrollTop = this.outputEl.scrollHeight;
+      });
+    }
   }
 
   boot() {

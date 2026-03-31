@@ -1,5 +1,5 @@
 import { TerminalInstance } from "../terminal/TerminalInstance.js";
-import { saveVisitor, isUserRegistered } from "../firebase.js";
+import { saveVisitor, isUserRegistered, getVisitorCount } from "../firebase.js";
 
 let tabCounter = 1;
 const makeTab = () => ({ id: ++tabCounter, title: `Terminal ${tabCounter}` });
@@ -23,6 +23,7 @@ export class KaliApp {
       if (registered) {
         this.render();
         this.tickClock();
+        this.updateVisitorCount();
         setInterval(() => this.tickClock(), 1000);
       } else {
         this.showWelcomeModal();
@@ -30,6 +31,17 @@ export class KaliApp {
     } catch (err) {
       console.error('Error checking registration:', err);
       this.showWelcomeModal();
+    }
+  }
+
+  async updateVisitorCount() {
+    try {
+      const count = await getVisitorCount();
+      if (this.visitorCountEl) {
+        this.visitorCountEl.textContent = `👥 ${count} visitors`;
+      }
+    } catch (err) {
+      console.error('Error getting visitor count:', err);
     }
   }
 
@@ -83,6 +95,7 @@ export class KaliApp {
           modal.remove();
           this.render();
           this.tickClock();
+          this.updateVisitorCount();
           setInterval(() => this.tickClock(), 1000);
         }, 800);
       } catch (err) {
@@ -269,6 +282,9 @@ export class KaliApp {
       const battery = document.createElement("span");
       battery.textContent = "⚡ 100%";
 
+      this.visitorCountEl = document.createElement("span");
+      this.visitorCountEl.textContent = "👥 ...";
+
       const links = document.createElement("span");
       links.className = "top-owner-links";
       links.innerHTML =
@@ -276,7 +292,7 @@ export class KaliApp {
         '<a href="https://github.com/hazemezz123/Kali_Linux_Simulation" target="_blank" rel="noopener noreferrer">Repo</a> · ' +
         '<a href="https://www.linkedin.com/in/hazem-ezz-424498285/" target="_blank" rel="noopener noreferrer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" /> LinkedIn</a>';
 
-      right.append(user, ip, battery, links);
+      right.append(user, ip, battery, this.visitorCountEl, links);
 
       topBar.append(left, this.clockEl, right);
 
