@@ -731,6 +731,7 @@ body {
 
   .terminal-output {
     padding: 10px;
+    overflow-y: hidden;
   }
 
   .terminal-input-row {
