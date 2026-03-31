@@ -185,7 +185,15 @@ export class KaliApp {
       ip.textContent = "◈ 192.168.1.50";
       const battery = document.createElement("span");
       battery.textContent = "⚡ 100%";
-      right.append(user, ip, battery);
+
+      const links = document.createElement("span");
+      links.className = "top-owner-links";
+      links.innerHTML =
+        '<a href="https://github.com/hazemezz123" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/github/00e5ff" alt="GitHub" /> GitHub</a> · ' +
+        '<a href="https://github.com/hazemezz123/Kali_Linux_Simulation" target="_blank" rel="noopener noreferrer">Repo</a> · ' +
+        '<a href="https://www.linkedin.com/in/hazem-ezz-424498285/" target="_blank" rel="noopener noreferrer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" /> LinkedIn</a>';
+
+      right.append(user, ip, battery, links);
 
       topBar.append(left, this.clockEl, right);
 

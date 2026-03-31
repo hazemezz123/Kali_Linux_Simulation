@@ -81,6 +81,33 @@ body {
   gap: 4px;
 }
 
+.top-owner-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #00e5ff;
+  text-decoration: none;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.top-owner-links img {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
+.top-owner-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.top-owner-links a:hover {
+  text-decoration: underline;
+}
+
 .online-dot {
   width: 6px;
   height: 6px;

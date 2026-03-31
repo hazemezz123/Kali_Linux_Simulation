@@ -171,17 +171,18 @@ export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
     },
 
     cd(args) {
-      const target = args[0] ? resolvePath(cwd, args[0]) : "/root";
+      const pathArg = args.find((a) => !a.startsWith("-"));
+      const target = pathArg ? resolvePath(cwd, pathArg) : "/root";
       const node = getNode(target);
       if (!node)
         return addOutput({
           type: "error",
-          text: `cd: ${args[0]}: No such file or directory`,
+          text: `cd: ${pathArg || target}: No such file or directory`,
         });
       if (node.type !== "dir")
         return addOutput({
           type: "error",
-          text: `cd: ${args[0]}: Not a directory`,
+          text: `cd: ${pathArg || target}: Not a directory`,
         });
       setCwd(target);
     },
@@ -333,9 +334,53 @@ export function buildCommands(fs, setFs, cwd, setCwd, addOutput, historyList) {
     mkdir(args) {
       if (!args.length)
         return addOutput({ type: "error", text: "mkdir: missing operand" });
+
+      const useParents = args.some((a) => a.startsWith("-") && a.includes("p"));
+      const targets = args.filter((a) => !a.startsWith("-"));
+      if (!targets.length)
+        return addOutput({ type: "error", text: "mkdir: missing operand" });
+
       const newFs = { ...fs };
-      for (const arg of args.filter((a) => !a.startsWith("-"))) {
+
+      const createDirPath = (fullPath) => {
+        const parts = fullPath.split("/").filter(Boolean);
+        let cur = "/";
+        for (const part of parts) {
+          const next = cur === "/" ? `/${part}` : `${cur}/${part}`;
+          const existing = newFs[next];
+          if (existing) {
+            if (existing.type !== "dir") return false;
+          } else {
+            const parent = cur;
+            const parentNode = newFs[parent];
+            if (!parentNode || parentNode.type !== "dir") return false;
+            if (!(parentNode.children || []).includes(part)) {
+              newFs[parent] = {
+                ...parentNode,
+                children: [...(parentNode.children || []), part],
+              };
+            }
+            newFs[next] = { type: "dir", children: [] };
+          }
+          cur = next;
+        }
+        return true;
+      };
+
+      for (const arg of targets) {
         const p = resolvePath(cwd, arg);
+
+        if (useParents) {
+          const ok = createDirPath(p);
+          if (!ok) {
+            addOutput({
+              type: "error",
+              text: `mkdir: cannot create '${arg}': No such directory`,
+            });
+          }
+          continue;
+        }
+
         if (newFs[p]) {
           addOutput({
             type: "error",
