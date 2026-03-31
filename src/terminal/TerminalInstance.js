@@ -13,11 +13,14 @@ export class TerminalInstance {
 
     this.fs = buildFS();
     this.cwd = "/root";
-    this.history = [];
+    this.history = JSON.parse(localStorage.getItem(`terminal_history_${tabId}`) || "[]");
     this.histIdx = -1;
     this.input = "";
     this.outputLines = [];
     this.manualBlur = false;
+    this.typingQueue = [];
+    this.isTyping = false;
+    this.typingSpeed = 15;
 
     this.buildDom();
     this.boot();
@@ -101,13 +104,69 @@ export class TerminalInstance {
       return;
     }
     this.outputLines.push({ ...entry, id: Math.random() });
-    this.outputEl.appendChild(lineNode(entry));
+    const node = lineNode(entry);
+    this.outputEl.appendChild(node);
     
     // Smooth scroll on mobile
     if (this.isActive()) {
       requestAnimationFrame(() => {
         this.outputEl.scrollTop = this.outputEl.scrollHeight;
       });
+    }
+  }
+
+  addOutputTyping(entry, forceInstant = false) {
+    if (entry.type === "clear") {
+      this.outputLines = [];
+      this.outputEl.innerHTML = "";
+      return;
+    }
+    this.outputLines.push({ ...entry, id: Math.random() });
+    const node = lineNode(entry);
+    this.outputEl.appendChild(node);
+    
+    const skipTypes = ["ascii", "ls-grid", "ls-long", "nmap-row", "kv", "helprow"];
+    const isLarge = entry.text && entry.text.length > 500;
+    const shouldType = entry.text && !skipTypes.includes(entry.type) && !forceInstant && !isLarge;
+    
+    if (shouldType) {
+      const fullText = node.textContent;
+      node.textContent = "";
+      this.typeText(node, fullText);
+    }
+    
+    if (this.isActive()) {
+      requestAnimationFrame(() => {
+        this.outputEl.scrollTop = this.outputEl.scrollHeight;
+      });
+    }
+  }
+
+  typeText(node, text) {
+    this.typingQueue.push({ node, text, idx: 0 });
+    if (!this.isTyping) {
+      this.isTyping = true;
+      this.processTypingQueue();
+    }
+  }
+
+  processTypingQueue() {
+    if (this.typingQueue.length === 0) {
+      this.isTyping = false;
+      return;
+    }
+    
+    const item = this.typingQueue[0];
+    if (item.idx < item.text.length) {
+      item.node.textContent += item.text[item.idx];
+      item.idx++;
+      if (this.isActive()) {
+        this.outputEl.scrollTop = this.outputEl.scrollHeight;
+      }
+      setTimeout(() => this.processTypingQueue(), this.typingSpeed);
+    } else {
+      this.typingQueue.shift();
+      this.processTypingQueue();
     }
   }
 
@@ -135,7 +194,7 @@ export class TerminalInstance {
       },
       { type: "output", text: "" },
     ];
-    boot.forEach((l, i) => setTimeout(() => this.addOutput(l), i * 40));
+    boot.forEach((l, i) => setTimeout(() => this.addOutputTyping(l), i * 40));
   }
 
   handleKey(e) {
@@ -145,12 +204,13 @@ export class TerminalInstance {
       if (val) {
         this.history = [val, ...this.history];
         this.histIdx = -1;
+        localStorage.setItem(`terminal_history_${this.tabId}`, JSON.stringify(this.history));
       }
       this.input = "";
       this.inputEl.value = "";
       if (!val) return;
       if (/^[A-Z_]+=/.test(val)) {
-        this.addOutput({ type: "dim", text: "(set)" });
+        this.addOutputTyping({ type: "dim", text: "(set)" }, true);
         return;
       }
       const segments = val.split("|").map((s) => s.trim());
@@ -160,7 +220,7 @@ export class TerminalInstance {
         (nextFs) => this.setFs(nextFs),
         this.cwd,
         (nextCwd) => this.setCwd(nextCwd),
-        (entry) => this.addOutput(entry),
+        (entry) => this.addOutputTyping(entry),
         this.history,
       );
     } else if (e.key === "ArrowUp") {
@@ -185,7 +245,7 @@ export class TerminalInstance {
           this.input = m[0] + " ";
           this.inputEl.value = this.input;
         } else if (m.length > 1)
-          this.addOutput({ type: "dim", text: m.join("  ") });
+          this.addOutputTyping({ type: "dim", text: m.join("  ") }, true);
       } else {
         const dir = last.includes("/")
           ? last.slice(0, last.lastIndexOf("/") + 1)
@@ -204,11 +264,11 @@ export class TerminalInstance {
               tokens.join(" ") + (this.fs[full]?.type === "dir" ? "/" : " ");
             this.inputEl.value = this.input;
           } else if (m.length > 1)
-            this.addOutput({ type: "dim", text: m.join("  ") });
+            this.addOutputTyping({ type: "dim", text: m.join("  ") }, true);
         }
       }
     } else if (e.ctrlKey && e.key.toLowerCase() === "c") {
-      this.addOutput({ type: "error", text: "^C" });
+      this.addOutputTyping({ type: "error", text: "^C" }, true);
       this.input = "";
       this.inputEl.value = "";
     } else if (e.ctrlKey && e.key.toLowerCase() === "l") {
