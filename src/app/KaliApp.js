@@ -29,7 +29,7 @@ export class KaliApp {
         this.showWelcomeModal();
       }
     } catch (err) {
-      console.error('Error checking registration:', err);
+      console.error("Error checking registration:", err);
       this.showWelcomeModal();
     }
   }
@@ -41,7 +41,7 @@ export class KaliApp {
         this.visitorCountEl.textContent = `👥 ${count} visitors`;
       }
     } catch (err) {
-      console.error('Error getting visitor count:', err);
+      console.error("Error getting visitor count:", err);
     }
   }
 
@@ -261,10 +261,15 @@ export class KaliApp {
       left.className = "top-left";
       const logo = document.createElement("span");
       logo.className = "top-logo";
-      logo.textContent = "⬡ KALI";
+      const logoImg = document.createElement("img");
+      logoImg.src = "https://www.kali.org/images/kali-dragon-icon.svg";
+      logoImg.alt = "Kali";
+      logoImg.className = "top-logo-img";
+      logo.appendChild(logoImg);
+      logo.appendChild(document.createTextNode(" KALI"));
       const distro = document.createElement("span");
       distro.className = "top-distro";
-      distro.textContent = "GNU/Linux Rolling";
+      distro.textContent = "";
       left.append(logo, distro);
 
       this.clockEl = document.createElement("span");
