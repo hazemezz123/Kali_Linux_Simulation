@@ -32,7 +32,7 @@ body {
   height: 100dvh;
   background: #0a0a0f;
   color: #e0e0ff;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .top-bar {
@@ -62,137 +62,6 @@ body {
   align-items: center;
 }
 
-@media (max-width: 768px) {
-  .top-bar {
-    padding: 5px 8px;
-    gap: 6px;
-    min-height: auto;
-    position: relative;
-  }
-  
-  .top-left {
-    flex: 0 0 auto;
-  }
-  
-  .top-clock {
-    flex: 1;
-    text-align: center;
-    padding: 0;
-    font-size: 11px;
-  }
-  
-  .top-right {
-    display: none;
-  }
-  
-  .top-menu-btn {
-    display: flex;
-  }
-  
-  .top-mobile-dropdown {
-    display: block;
-  }
-  
-  .top-logo {
-    font-size: 10px;
-    letter-spacing: 1px;
-    gap: 4px;
-  }
-  
-  .top-logo-img {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .top-distro {
-    display: none;
-  }
-  
-  .window-chrome {
-    margin: 0;
-    border-radius: 0;
-    border: none;
-  }
-  
-  .terminal-output {
-    padding: 8px;
-    font-size: 12px;
-    padding-bottom: 0;
-  }
-  
-  .terminal-output::before {
-    width: 200px;
-    height: 200px;
-  }
-  
-  .terminal-input-row {
-    padding: 4px 8px 12px;
-    position: sticky;
-    bottom: 0;
-    background: #0f0f1a;
-    z-index: 10;
-  }
-  
-  .prompt {
-    font-size: 12px;
-  }
-  
-  .line {
-    font-size: 12px;
-    line-height: 1.5;
-  }
-  
-  .line-ascii {
-    font-size: 7px;
-    line-height: 1.2;
-  }
-  
-  .line-help-cmd {
-    min-width: 140px;
-  }
-  
-  .line-nmap-port {
-    width: 60px;
-  }
-  
-  .line-nmap-state {
-    width: 50px;
-  }
-  
-  .line-nmap-svc {
-    width: 80px;
-  }
-  
-  .title-bar {
-    padding: 5px 8px;
-    gap: 4px;
-  }
-  
-  .tab {
-    padding: 3px 8px;
-    font-size: 10px;
-  }
-  
-  .tab-add-btn {
-    padding: 3px 6px;
-    font-size: 12px;
-  }
-  
-  .window-controls {
-    margin-right: 4px;
-  }
-  
-  .wc-btn {
-    width: 10px;
-    height: 10px;
-  }
-  
-  .welcome-box {
-    padding: 24px;
-    width: 95%;
-    border-radius: 8px;
-  }
-}
 
 .top-distro,
 .top-clock,
@@ -245,25 +114,25 @@ body {
 
 .top-mobile-dropdown {
   display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
+  top: 40px;
+  right: 8px;
   background: #12121f;
   border: 1px solid #1e1e3a;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   padding: 8px 0;
-  min-width: 200px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  z-index: 100;
+  min-width: 220px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 9999;
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-8px) scale(0.95);
   transition: all 0.2s ease;
   pointer-events: none;
 }
 
 .top-mobile-dropdown.open {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -802,4 +671,201 @@ body {
   font-size: 12px;
   text-align: center;
   margin-top: -8px;
+}
+
+@media (max-width: 1024px) {
+  .top-bar {
+    padding: 6px 12px;
+    gap: 8px;
+    position: relative;
+    min-height: 40px;
+  }
+
+  .top-left {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  .top-clock {
+    flex: 1;
+    text-align: center;
+    padding: 0 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .top-right {
+    display: none;
+  }
+
+  .top-menu-btn {
+    display: flex;
+    flex-shrink: 0;
+    width: 32px;
+    height: 28px;
+    padding: 4px;
+  }
+
+  .top-mobile-dropdown {
+    display: block;
+  }
+
+  .top-logo {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  .top-logo-img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .top-distro {
+    display: none;
+  }
+
+  .window-chrome {
+    margin: 6px;
+    border-radius: 6px;
+  }
+
+  .terminal-output {
+    padding: 10px;
+  }
+
+  .terminal-input-row {
+    padding: 4px 10px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 5px 8px;
+    gap: 6px;
+    min-height: auto;
+    position: relative;
+  }
+
+  .top-left {
+    flex: 0 0 auto;
+  }
+
+  .top-clock {
+    flex: 1;
+    text-align: center;
+    padding: 0;
+    font-size: 11px;
+  }
+
+  .top-right {
+    display: none;
+  }
+
+  .top-menu-btn {
+    display: flex;
+  }
+
+  .top-mobile-dropdown {
+    display: block;
+  }
+
+  .top-logo {
+    font-size: 10px;
+    letter-spacing: 1px;
+    gap: 4px;
+  }
+
+  .top-logo-img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .top-distro {
+    display: none;
+  }
+
+  .window-chrome {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+  }
+
+  .terminal-output {
+    padding: 8px;
+    font-size: 12px;
+    padding-bottom: 0;
+  }
+
+  .terminal-output::before {
+    width: 200px;
+    height: 200px;
+  }
+
+  .terminal-input-row {
+    padding: 4px 8px 12px;
+    position: sticky;
+    bottom: 0;
+    background: #0f0f1a;
+    z-index: 10;
+  }
+
+  .prompt {
+    font-size: 12px;
+  }
+
+  .line {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .line-ascii {
+    font-size: 7px;
+    line-height: 1.2;
+  }
+
+  .line-help-cmd {
+    min-width: 140px;
+  }
+
+  .line-nmap-port {
+    width: 60px;
+  }
+
+  .line-nmap-state {
+    width: 50px;
+  }
+
+  .line-nmap-svc {
+    width: 80px;
+  }
+
+  .title-bar {
+    padding: 5px 8px;
+    gap: 4px;
+  }
+
+  .tab {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .tab-add-btn {
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+
+  .window-controls {
+    margin-right: 4px;
+  }
+
+  .wc-btn {
+    width: 10px;
+    height: 10px;
+  }
+
+  .welcome-box {
+    padding: 24px;
+    width: 95%;
+    border-radius: 8px;
+  }
 }
