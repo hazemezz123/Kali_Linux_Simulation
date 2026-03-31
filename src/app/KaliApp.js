@@ -40,6 +40,10 @@ export class KaliApp {
       if (this.visitorCountEl) {
         this.visitorCountEl.textContent = `👥 ${count} visitors`;
       }
+      const mobileCount = document.getElementById("mobile-visitor-count");
+      if (mobileCount) {
+        mobileCount.textContent = `👥 ${count} visitors`;
+      }
     } catch (err) {
       console.error("Error getting visitor count:", err);
     }
@@ -275,6 +279,11 @@ export class KaliApp {
       this.clockEl = document.createElement("span");
       this.clockEl.className = "top-clock";
 
+      // Mobile menu button
+      this.menuBtn = document.createElement("button");
+      this.menuBtn.className = "top-menu-btn";
+      this.menuBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+
       const right = document.createElement("div");
       right.className = "top-right";
       const user = document.createElement("span");
@@ -299,7 +308,33 @@ export class KaliApp {
 
       right.append(user, ip, battery, this.visitorCountEl, links);
 
-      topBar.append(left, this.clockEl, right);
+      // Mobile dropdown
+      this.mobileDropdown = document.createElement("div");
+      this.mobileDropdown.className = "top-mobile-dropdown";
+      this.mobileDropdown.innerHTML = `
+        <div class="dropdown-item top-user"><span class="online-dot"></span>root@kali</div>
+        <div class="dropdown-item">◈ 192.168.1.50</div>
+        <div class="dropdown-item">⚡ 100%</div>
+        <div class="dropdown-item" id="mobile-visitor-count">👥 ...</div>
+        <div class="dropdown-links">
+          <a href="https://github.com/hazemezz123" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/github/00e5ff" alt="GitHub" /> GitHub</a>
+          <a href="https://github.com/hazemezz123/Kali_Linux_Simulation" target="_blank" rel="noopener noreferrer">Repo</a>
+          <a href="https://www.linkedin.com/in/hazem-ezz-424498285/" target="_blank" rel="noopener noreferrer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" /> LinkedIn</a>
+        </div>
+      `;
+
+      this.menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.mobileDropdown.classList.toggle("open");
+        this.menuBtn.classList.toggle("active");
+      });
+
+      document.addEventListener("click", () => {
+        this.mobileDropdown.classList.remove("open");
+        this.menuBtn.classList.remove("active");
+      });
+
+      topBar.append(left, this.clockEl, this.menuBtn, right, this.mobileDropdown);
 
       const chrome = document.createElement("div");
       chrome.className = "window-chrome";
