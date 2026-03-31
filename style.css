@@ -28,7 +28,8 @@ body {
 .kali-app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  height: 100dvh;
   background: #0a0a0f;
   color: #e0e0ff;
   overflow: hidden;
@@ -43,14 +44,6 @@ body {
   border-bottom: 1px solid #1e1e3a;
   flex-shrink: 0;
   min-height: 36px;
-}
-
-@media (max-width: 768px) {
-  .top-bar {
-    padding: 5px 8px;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
 }
 
 .top-left {
@@ -69,8 +62,29 @@ body {
   align-items: center;
 }
 
-
 @media (max-width: 768px) {
+  .top-bar {
+    padding: 5px 8px;
+    gap: 4px;
+    min-height: auto;
+  }
+  
+  .top-left {
+    flex: 0 0 auto;
+  }
+  
+  .top-clock {
+    flex: 1;
+    text-align: right;
+    padding: 0;
+    font-size: 11px;
+  }
+  
+  .top-right {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+  }
+  
   .top-logo {
     font-size: 10px;
     letter-spacing: 1px;
@@ -81,18 +95,111 @@ body {
     width: 14px;
     height: 14px;
   }
+  
+  .top-distro {
+    display: none;
+  }
+  
+  .top-right {
+    gap: 6px;
+    font-size: 9px;
+    flex-wrap: nowrap;
+  }
+  
+  .top-owner-links {
+    display: none;
+  }
+  
+  .window-chrome {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .terminal-output {
+    padding: 8px;
+    font-size: 12px;
+    padding-bottom: 0;
+  }
+  
+  .terminal-output::before {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .terminal-input-row {
+    padding: 4px 8px 12px;
+    position: sticky;
+    bottom: 0;
+    background: #0f0f1a;
+    z-index: 10;
+  }
+  
+  .prompt {
+    font-size: 12px;
+  }
+  
+  .line {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  
+  .line-ascii {
+    font-size: 7px;
+    line-height: 1.2;
+  }
+  
+  .line-help-cmd {
+    min-width: 140px;
+  }
+  
+  .line-nmap-port {
+    width: 60px;
+  }
+  
+  .line-nmap-state {
+    width: 50px;
+  }
+  
+  .line-nmap-svc {
+    width: 80px;
+  }
+  
+  .title-bar {
+    padding: 5px 8px;
+    gap: 4px;
+  }
+  
+  .tab {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+  
+  .tab-add-btn {
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+  
+  .window-controls {
+    margin-right: 4px;
+  }
+  
+  .wc-btn {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .welcome-box {
+    padding: 24px;
+    width: 95%;
+    border-radius: 8px;
+  }
 }
 
 .top-distro,
 .top-clock,
 .top-right {
   color: #5c5c8a;
-}
-
-@media (max-width: 768px) {
-  .top-distro {
-    display: none;
-  }
 }
 
 .top-distro {
@@ -113,14 +220,6 @@ body {
   font-size: 11px;
   flex: 1;
   justify-content: flex-end;
-}
-
-@media (max-width: 768px) {
-  .top-right {
-    gap: 8px;
-    font-size: 10px;
-    flex-wrap: wrap;
-  }
 }
 
 .top-user {
@@ -152,12 +251,6 @@ body {
   line-height: 1;
 }
 
-@media (max-width: 768px) {
-  .top-owner-links {
-    display: none;
-  }
-}
-
 .top-owner-links a:hover {
   text-decoration: underline;
 }
@@ -181,13 +274,6 @@ body {
   overflow: hidden;
   background: #0f0f1a;
   box-shadow: 0 0 30px rgba(41, 121, 255, 0.07);
-}
-
-@media (max-width: 768px) {
-  .window-chrome {
-    margin: 5px;
-    border-radius: 4px;
-  }
 }
 
 .title-bar {
@@ -335,35 +421,12 @@ body {
   z-index: 0;
 }
 
-@media (max-width: 768px) {
-  .terminal-output {
-    padding: 8px;
-    font-size: 12px;
-  }
-  
-  .terminal-output::before {
-    width: 200px;
-    height: 200px;
-  }
-}
-
 .terminal-input-row {
   display: flex;
   align-items: center;
   padding: 4px 16px 12px;
   flex-shrink: 0;
   position: relative;
-}
-
-@media (max-width: 768px) {
-  .terminal-input-row {
-    padding: 4px 8px 8px;
-    /* Ensure input row stays visible above mobile keyboard */
-    position: sticky;
-    bottom: 0;
-    background: #0f0f1a;
-    z-index: 10;
-  }
 }
 
 .terminal-input {
@@ -431,13 +494,6 @@ body {
   font-family: "JetBrains Mono", monospace;
   position: relative;
   z-index: 1;
-}
-
-@media (max-width: 768px) {
-  .line {
-    font-size: 12px;
-    line-height: 1.5;
-  }
 }
 
 .line-ascii {
@@ -558,14 +614,6 @@ body {
   width: 90%;
   box-shadow: 0 0 40px rgba(41, 121, 255, 0.3);
   backdrop-filter: blur(12px);
-}
-
-@media (max-width: 768px) {
-  .welcome-box {
-    padding: 24px;
-    width: 95%;
-    border-radius: 8px;
-  }
 }
 
 .welcome-title {
